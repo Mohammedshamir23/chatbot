@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ChatBuddy 🤖</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="wrapper">
+    <div class="chat-container">
+      <h2>ChatBuddy 🤖</h2>
+
+      <div id="chatbox">
+        <p class="botText"><span>Hello! I'm ChatBuddy. Type something to start chatting 😊</span></p>
+      </div>
+
+      <div class="input-area">
+        <input id="userInput" type="text" placeholder="Type your message..." autocomplete="off">
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function sendMessage() {
+      const userInput = document.getElementById("userInput");
+      const userText = userInput.value.trim();
+      if (userText === "") return;
+
+      let chatbox = document.getElementById("chatbox");
+
+      chatbox.innerHTML += `<p class="userText"><span>${userText}</span></p>`;
+      userInput.value = "";
+
+      fetch(`/get?msg=${encodeURIComponent(userText)}`)
+        .then(response => response.json())
+        .then(data => {
+          chatbox.innerHTML += `<p class="botText"><span>${data}</span></p>`;
+          chatbox.scrollTop = chatbox.scrollHeight;
+        });
+    }
+
+    document.getElementById("userInput")
+      .addEventListener("keypress", function(e) {
+        if (e.key === "Enter") sendMessage();
+      });
+  </script>
+
+</body>
+</html>
